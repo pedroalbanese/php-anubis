@@ -14,7 +14,7 @@
  *
  *
  * @author Alexander Zubakov <developer@xinit.ru>
- * @author Pedro F. Alabnese <pedroalbanese@hotmail.com>
+ * @author Pedro F. Albanese <pedroalbanese@hotmail.com>
  * @copyright © 2012 Alexander Zubakov, @copyright © 2021 Pedro F. Albanese
  */
 class Anubis {
