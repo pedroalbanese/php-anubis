@@ -675,61 +675,61 @@ class Anubis {
         return $block;
     }
 
- /**
- * Encrypts or decrypts the data in CTR mode.
- * 
- * @param string $input The input data to encrypt or decrypt.
- * @param string $key The cipher key.
- * @param string $iv The initialization vector (counter).
- * @return string The encrypted or decrypted data.
- */
-public function ctrMode($input, $key, $iv) {
-    // Ensure the input is a multiple of the block size (16 bytes)
-    $blockSize = 16;  // Block size for Anubis cipher
-    $output = '';
-    $counter = $iv;  // Initialize counter with the IV
-    
-    // Set up key schedule
-    $this->keySetup($key);
+    /**
+     * Encrypts or decrypts the data in CTR mode.
+     * 
+     * @param string $input The input data to encrypt or decrypt.
+     * @param string $key The cipher key.
+     * @param string $iv The initialization vector (counter).
+     * @return string The encrypted or decrypted data.
+     */
+    public function ctrMode($input, $key, $iv) {
+        // Ensure the input is a multiple of the block size (16 bytes)
+        $blockSize = 16;  // Block size for Anubis cipher
+        $output = '';
+        $counter = $iv;  // Initialize counter with the IV
+        
+        // Set up key schedule
+        $this->keySetup($key);
 
-    // Iterate over the input data in blocks
-    $inputLen = strlen($input);
-    for ($i = 0; $i < $inputLen; $i += $blockSize) {
-        // Get the next block of the input (or the remaining bytes if the last block)
-        $block = substr($input, $i, $blockSize);
+        // Iterate over the input data in blocks
+        $inputLen = strlen($input);
+        for ($i = 0; $i < $inputLen; $i += $blockSize) {
+            // Get the next block of the input (or the remaining bytes if the last block)
+            $block = substr($input, $i, $blockSize);
 
-        // Encrypt the counter (IV) to produce the keystream for this block
-        $keystream = $this->crypt($counter, $this->roundKeyEnc);
+            // Encrypt the counter (IV) to produce the keystream for this block
+            $keystream = $this->crypt($counter, $this->roundKeyEnc);
 
-        // XOR the input block with the keystream to get the ciphertext
-        $cipherBlock = '';
-        for ($j = 0; $j < strlen($block); $j++) {
-            $cipherBlock .= chr(ord($block[$j]) ^ ord($keystream[$j]));
+            // XOR the input block with the keystream to get the ciphertext
+            $cipherBlock = '';
+            for ($j = 0; $j < strlen($block); $j++) {
+                $cipherBlock .= chr(ord($block[$j]) ^ ord($keystream[$j]));
+            }
+            $output .= $cipherBlock;
+
+            // Increment the counter for the next block
+            $counter = $this->incrementCounter($counter);
         }
-        $output .= $cipherBlock;
 
-        // Increment the counter for the next block
-        $counter = $this->incrementCounter($counter);
+        return $output;
     }
 
-    return $output;
-}
+    /**
+     * Increment the counter (IV) for the next block.
+     * This function assumes the counter is a 16-byte string.
+     *
+     * @param string $counter The current counter.
+     * @return string The incremented counter.
+     */
+    protected function incrementCounter($counter) {
+        // Convert the counter to an array of bytes
+        $counterArr = unpack('C16', $counter);
+        
+        // Start from the least significant byte and increment
+        $counterArr[16]++;
 
-/**
- * Increment the counter (IV) for the next block.
- * This function assumes the counter is a 16-byte string.
- *
- * @param string $counter The current counter.
- * @return string The incremented counter.
- */
-protected function incrementCounter($counter) {
-    // Convert the counter to an array of bytes
-    $counterArr = unpack('C16', $counter);
-    
-    // Start from the least significant byte and increment
-    $counterArr[16]++;
-
-    // Rebuild the counter from the byte array
-    return pack('C16', ...$counterArr);
-}
+        // Rebuild the counter from the byte array
+        return pack('C16', ...$counterArr);
+    }
 }
