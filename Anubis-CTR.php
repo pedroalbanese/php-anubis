@@ -732,4 +732,85 @@ class Anubis {
         // Rebuild the counter from the byte array
         return pack('C16', ...$counterArr);
     }
+    
+    public function __construct($key = null) {
+        if ($key !== null) {
+            $this->keySetup($key);
+        }
+    }
+
+    public function generate($message) {
+        $blockSize = 16;
+
+        // 1. Gerar subchaves K1 e K2
+        list($K1, $K2) = $this->generateSubkeys();
+
+        // 2. Separar mensagem em blocos de 16 bytes
+        $n = strlen($message);
+        $numBlocks = ($n === 0) ? 1 : ceil($n / $blockSize);
+        $lastBlockComplete = ($n > 0 && ($n % $blockSize) === 0);
+
+        // 3. Preparar último bloco
+        $lastBlockStart = ($numBlocks - 1) * $blockSize;
+        $lastBlock = substr($message, $lastBlockStart);
+
+        if ($lastBlockComplete) {
+            $M_last = $this->xorBlock($lastBlock, $K1);
+        } else {
+            $padded = $this->pad($lastBlock);
+            $M_last = $this->xorBlock($padded, $K2);
+        }
+
+        // 4. Inicializar vetor de estado (zero)
+        $X = str_repeat("\x00", $blockSize);
+
+        // 5. Processar todos os blocos exceto o último
+        for ($i = 0; $i < $numBlocks - 1; $i++) {
+            $block = substr($message, $i * $blockSize, $blockSize);
+            $X = $this->crypt($this->xorBlock($X, $block), $this->roundKeyEnc);
+        }
+
+        // 6. Último bloco
+        $T = $this->crypt($this->xorBlock($X, $M_last), $this->roundKeyEnc);
+
+        return $T;
+    }
+
+    private function generateSubkeys() {
+        $constRb = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x87";
+        $zeroBlock = str_repeat("\x00", 16);
+        $L = $this->crypt($zeroBlock, $this->roundKeyEnc);
+        $K1 = $this->leftShiftOne($L);
+        if ((ord($L[0]) & 0x80) !== 0) {
+            $K1 = $this->xorBlock($K1, $constRb);
+        }
+
+        $K2 = $this->leftShiftOne($K1);
+        if ((ord($K1[0]) & 0x80) !== 0) {
+            $K2 = $this->xorBlock($K2, $constRb);
+        }
+
+        return [$K1, $K2];
+    }
+
+    private function xorBlock($a, $b) {
+        return $a ^ $b;
+    }
+
+    private function pad($block) {
+        $padLen = 16 - strlen($block);
+        return $block . "\x80" . str_repeat("\x00", $padLen - 1);
+    }
+
+    private function leftShiftOne($input) {
+        $output = '';
+        $carry = 0;
+        for ($i = 15; $i >= 0; $i--) {
+            $byte = ord($input[$i]);
+            $shifted = (($byte << 1) & 0xFF) | $carry;
+            $carry = ($byte & 0x80) ? 1 : 0;
+            $output = chr($shifted) . $output;
+        }
+        return $output;
+    }
 }
