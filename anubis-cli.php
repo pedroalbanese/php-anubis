@@ -235,25 +235,14 @@ function print_help() {
     fprintf(STDERR, "  %s encrypt KEY_HEX [OPTIONS]\n", $script);
     fprintf(STDERR, "  %s decrypt KEY_HEX [OPTIONS]\n", $script);
     fprintf(STDERR, "\nExamples:\n");
-    fprintf(STDERR, "  Encrypt file:    %s encrypt 00000000000000000000000000000000 --infile test.txt --outfile encrypted.bin --aad 'my data'\n", $script);
-    fprintf(STDERR, "  Decrypt file:    %s decrypt 00000000000000000000000000000000 --infile encrypted.bin --outfile decrypted.txt --aad 'my data'\n", $script);
-    fprintf(STDERR, "  Pipe encryption: echo 'Hello' | %s encrypt 00000000000000000000000000000000 --aad opa > encrypted.bin\n", $script);
-    fprintf(STDERR, "  Pipe decryption: cat encrypted.bin | %s decrypt 00000000000000000000000000000000 --aad opa\n", $script);
+    fprintf(STDERR, "  Encrypt file:    %s encrypt KEY_HEX --infile test.txt --outfile encrypted.bin --aad 'my data'\n", $script);
+    fprintf(STDERR, "  Decrypt file:    %s decrypt KEY_HEX --infile encrypted.bin --outfile decrypted.txt --aad 'my data'\n", $script);
     fprintf(STDERR, "\nOptions:\n");
     fprintf(STDERR, "  -i, --infile FILE    Input file (stdin if not provided)\n");
     fprintf(STDERR, "  -o, --outfile FILE   Output file (stdout if not provided)\n");
     fprintf(STDERR, "  -a, --aad TEXT       Additional authenticated data\n");
     fprintf(STDERR, "  -n, --nonce HEX      Nonce in hex (12 bytes = 24 hex chars)\n");
     fprintf(STDERR, "  -h, --help           Show this help\n");
-    fprintf(STDERR, "\nKey requirements (hex string):\n");
-    fprintf(STDERR, "  • 128-bit: 32 hex chars (16 bytes)  Example: 00000000000000000000000000000000\n");
-    fprintf(STDERR, "  • 160-bit: 40 hex chars (20 bytes)  Example: 0000000000000000000000000000000000000000\n");
-    fprintf(STDERR, "  • 192-bit: 48 hex chars (24 bytes)  Example: 000000000000000000000000000000000000000000000000\n");
-    fprintf(STDERR, "  • 224-bit: 56 hex chars (28 bytes)  Example: 00000000000000000000000000000000000000000000000000000000\n");
-    fprintf(STDERR, "  • 256-bit: 64 hex chars (32 bytes)  Example: 0000000000000000000000000000000000000000000000000000000000000000\n");
-    fprintf(STDERR, "  • 288-bit: 72 hex chars (36 bytes)\n");
-    fprintf(STDERR, "  • 320-bit: 80 hex chars (40 bytes)\n");
-    fprintf(STDERR, "\nNote: Hex strings can have spaces, colons, or dashes (they will be removed)\n");
 }
 
 function main() {
