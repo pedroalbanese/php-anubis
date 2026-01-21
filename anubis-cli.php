@@ -3,7 +3,7 @@
  * CLI interface for Anubis-GCM - VERSÃO CORRIGIDA COM VALIDAÇÃO DE CHAVE
  */
 
-require_once __DIR__ . '/anubis-GCM.php';
+require_once __DIR__ . '/Anubis-GCM.php';
 
 class AnubisGCM_CLI {
     private $key;
