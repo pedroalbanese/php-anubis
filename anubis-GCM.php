@@ -8,7 +8,7 @@
  * @copyright © 2021 Pedro F. Albanese
  */
 
-// Anubis cipher implementation (mantenha o mesmo código da classe Anubis)
+// Anubis cipher implementation (keep the same code from the Anubis class)
 // Anubis cipher implementation
 class Anubis {
     /**
@@ -645,7 +645,7 @@ class Anubis {
     }
 }
 
-// GCM implementation - VERSÃO CORRIGIDA PARA SER COMPATÍVEL COM PYTHON/GO
+// GCM implementation - CORRECTED VERSION TO BE COMPATIBLE WITH PYTHON/GO
 class AnubisGCM {
     const BLOCK_SIZE = 16;
     
@@ -932,7 +932,7 @@ class GCMAnubis {
     }
 }
 
-// Funções auxiliares para compatibilidade
+// Helper functions for compatibility
 function newGCM($cipher) {
     return new AnubisGCM($cipher);
 }
@@ -945,11 +945,11 @@ function newGCMWithNonce($cipher, $nonce) {
     return new AnubisGCM($cipher, $nonce);
 }
 
-// Função para testar a compatibilidade
+// Function to test compatibility
 function test_compatibility() {
-    echo "=== Teste de Compatibilidade PHP-Python ===\n";
+    echo "=== PHP-Python Compatibility Test ===\n";
     
-    // Use os mesmos valores do Python
+    // Use the same values as Python
     $key = hex2bin('000102030405060708090a0b0c0d0e0f');
     $nonce = hex2bin('101112131415161718191a1b');
     $plaintext = "Hello, World! This is a test message for Anubis-GCM.";
@@ -992,7 +992,7 @@ function test_compatibility() {
     echo "Wrong AAD:  " . ($decryptedWrongAd === null ? "SUCCESS (rejected)" : "FAILED") . "\n";
 }
 
-// Função para gerar saída no formato esperado pelo CLI
+// Function to generate output in the expected CLI format
 function anubis_encrypt_cli($key_hex, $infile = null, $aad = null, $outfile = null, $tag_size = 16, $nonce_hex = null) {
     try {
         $key = hex2bin($key_hex);
@@ -1143,7 +1143,7 @@ function anubis_decrypt_cli($key_hex, $infile = null, $aad = null, $outfile = nu
     }
 }
 
-// Função de teste principal
+// Main test function
 function test_gcm() {
     echo "Anubis-GCM Test\n";
     echo str_repeat("=", 60) . "\n";
@@ -1210,9 +1210,9 @@ function test_gcm() {
 
 // Run tests if executed directly
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($_SERVER['PHP_SELF'])) {
-    // Para testar a compatibilidade
+    // To test compatibility
     test_compatibility();
     
-    // Ou para testar mais detalhadamente
+    // Or to test more detailed
     // test_gcm();
 }
